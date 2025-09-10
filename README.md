@@ -154,15 +154,11 @@ This project demonstrates ability to:
 - ✅ Build comprehensive data quality reports
 - ✅ Work with government compliance requirements
 
+*This project highlights my ability to check data accuracy and run powerful SQL analysis.*
+
 ## ✉️ Contact
 
 **Sankaran S**  
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sankaran-s2001) [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sankaran-s21/) [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sankaran121101@gmail.com)
 
 ---
-
-*This project highlights my ability to check data accuracy and run powerful SQL analysis.*
-```
-
-***
-
