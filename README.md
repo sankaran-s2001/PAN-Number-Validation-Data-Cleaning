@@ -1,16 +1,23 @@
 # 🔐 PAN Number Validation & Data Cleaning Project
+### SQL + Python Dual Implementation
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![DataValidation](https://img.shields.io/badge/Data--Validation-FF6B35?style=for-the-badge&logo=shield&logoColor=white)
 ![DataCleaning](https://img.shields.io/badge/Data--Cleaning-4CAF50?style=for-the-badge&logo=simpleanalytics&logoColor=white)
-![CSV](https://img.shields.io/badge/CSV-FFDD00?style=for-the-badge&logo=files&logoColor=black)
+![Excel](https://img.shields.io/badge/Excel-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)
 
-A comprehensive PostgreSQL project that validates and cleans Indian PAN (Permanent Account Number) data using advanced SQL techniques and custom functions.
+A comprehensive data validation project that implements PAN (Permanent Account Number) validation using **both SQL and Python**, demonstrating proficiency in multiple data processing approaches with the same dataset.
 
 ## 🎯 What This Project Does
 
-This project takes a dataset of PAN numbers and performs complete data validation according to official Indian PAN format rules. It identifies valid vs invalid PANs, cleans messy data, and provides detailed reporting on data quality.
+This dual-implementation project validates Indian PAN numbers using two different approaches:
+- **PostgreSQL**: Advanced SQL with custom functions and complex validation logic
+- **Python**: Pandas-based data processing with regex validation and automated reporting
+
+Both implementations process the same dataset and deliver identical validation results, showcasing versatility in data processing techniques.
 
 ## 📋 About PAN Numbers
 
@@ -19,77 +26,68 @@ This project takes a dataset of PAN numbers and performs complete data validatio
 - **Next 4**: Numeric digits (0-9) 
 - **Last 1**: Alphabetic character (A-Z)
 
-**Special Rules**:
-- No adjacent identical characters (AABCD ❌, AXBCD ✅)
-- No sequential patterns (ABCDE ❌, ABCDX ✅)
-- Same rules apply to the 4-digit numeric section
+**Special Validation Rules**:
+- ❌ No adjacent identical characters (AABCD ❌, AXBCD ✅)
+- ❌ No sequential patterns (ABCDE ❌, ABCDX ✅)  
+- ❌ No sequential digits (1234 ❌, 1923 ✅)
+- ✅ Must match exact format and length requirements
 
-## 🧹 Data Cleaning Process
+## 🛠️ Implementation Approaches
+
+### 🐘 SQL Implementation (PostgreSQL)
+**Advanced Features Used:**
+- Custom PL/pgSQL functions for validation logic
+- Complex CTEs for multi-step data processing  
+- Regular expressions for pattern matching
+- Window functions for data analysis
+- Views for reusable data structures
+
+### 🐍 Python Implementation (Pandas)
+**Core Libraries & Techniques:**
+- **Pandas**: Data manipulation and cleaning
+- **Regular Expressions**: Pattern validation
+- **Custom Functions**: Modular validation logic  
+- **Excel Integration**: Multi-sheet output generation
+- **Data Export**: Automated report generation
+
+## 🧹 Data Cleaning Process (Both Implementations)
 
 ### Step 1: Handle Missing Data
-- Identified NULL and empty PAN entries
-- Removed incomplete records from processing
+- **SQL**: `WHERE pan_number IS NOT NULL AND TRIM(pan_number) <> ''`
+- **Python**: `df.replace({'Pan_Numbers': ''}, pd.NA).dropna()`
 
-### Step 2: Remove Duplicates
-- Found duplicate PAN numbers using GROUP BY
-- Ensured unique entries in final dataset
+### Step 2: Remove Duplicates  
+- **SQL**: `SELECT DISTINCT` with GROUP BY analysis
+- **Python**: `df.drop_duplicates(subset="Pan_Numbers", keep='first')`
 
-### Step 3: Clean Data Format
-- Removed leading/trailing spaces with TRIM()
-- Converted all letters to uppercase
-- Standardized data format
+### Step 3: Standardize Format
+- **SQL**: `UPPER(TRIM(pan_number))`
+- **Python**: `df["Pan_Numbers"].str.strip().str.upper()`
 
 ### Step 4: Advanced Validation
-- Built custom functions for adjacent character checking
-- Created sequential character validation logic
-- Applied regex pattern matching for structure validation
-
-## 🛠️ Advanced SQL Features Used
-
-### Custom Functions
-```
-
--- Function to check adjacent identical characters
-fn_check_adjacent_characters(text) → boolean
-
--- Function to detect sequential character patterns
-fn_check_sequential_characters(text) → boolean
-
-```
-
-### Complex Validation Logic
-- **Regex Pattern**: `^[A-Z]{5}[0-9]{4}[A-Z]$`
-- **Multi-layer Validation**: Structure + Adjacent + Sequential checks
-- **CTE Chains**: Organized complex logic flow
+- **SQL**: Custom functions + regex pattern matching
+- **Python**: Lambda functions + regex validation
 
 ## 📊 Key Results
 
-### Summary Report
-- **Total Records Processed**: All input records
-- **Valid PANs**: Count of correctly formatted PANs
-- **Invalid PANs**: Count of incorrectly formatted PANs  
-- **Missing/Incomplete**: Count of NULL or empty entries
+### 📋 Data Processing Summary
+![Summary Report Screenshot](summary_report.jpg)
 
-![output Screenshot](summary_report.jpg)
+### ✅ Valid vs Invalid PAN Distribution  
+![Validation Categories Screenshot](validation_catagories.jpg)
 
-### Validation Categories
-- ✅ **Valid PAN**: Meets all format requirements
-- ❌ **Invalid PAN**: Fails one or more validation rules
+### 🔄 SQL vs Python Performance Comparison
+Both implementations process 10,000+ records with identical accuracy:
+- **SQL**: Leverages database optimization for large datasets
+- **Python**: Provides flexible data manipulation and export options
 
-![output Screenshot](validation_catagories.jpg)
+## 🗃️ Technical Architecture
 
-## 🗃️ Database Structure
-
-### Main Table
+### SQL Database Structure
 ```
 
 stg_pan_number_dataset
 ├── pan_number (text) -- Raw PAN data
-
-```
-
-### View
-```
 
 vw_valid_invalid_pans
 ├── pan_number (text) -- Cleaned PAN
@@ -97,64 +95,112 @@ vw_valid_invalid_pans
 
 ```
 
-## 💻 SQL Skills Demonstrated
+### Python Data Pipeline
+```
 
-- **Data Cleaning**: NULL handling, duplicate removal, string formatting
-- **Custom Functions**: PostgreSQL PL/pgSQL function development
-- **Regular Expressions**: Pattern matching for data validation
-- **CTEs**: Multi-step data processing and organization
-- **Window Functions**: Advanced data analysis techniques
-- **Views**: Creating reusable data structures
-- **String Functions**: TRIM(), UPPER(), SUBSTRING(), ASCII()
+
+# Core validation functions
+
+has_adjacent_repetition(pan) → boolean
+is_sequential(pan) → boolean
+is_valid_pan(pan) → boolean
+
+# Data processing flow
+
+Raw Data → Cleaning → Validation → Report Generation
+
+```
+
+## 💻 Skills Demonstrated
+
+### SQL Expertise
+- **Custom Functions**: PostgreSQL PL/pgSQL development
+- **Advanced Queries**: CTEs, window functions, complex joins
+- **Data Validation**: Regex patterns, business rule implementation
+- **Performance**: Optimized queries for large datasets
+
+### Python Proficiency  
+- **Data Manipulation**: Pandas for ETL operations
+- **Function Development**: Modular, reusable validation logic
+- **File Handling**: Excel read/write operations with multiple sheets
+- **String Processing**: Advanced regex and text manipulation
 
 ## 📁 Project Files
 
 ```
 
-📦 pan-validation-sql
-├── 📄 README.md                              (This file)
-├── 📄 PAN_card_validation.sql                (Complete project code)
-├── 📄 PAN Number Validation Dataset.csv      (Original dataset)
-├── 📄 PAN Number Validation - Problem Statement.pdf  (Project requirements)
-├── 📷 summary_report.jpg                 (Summary analysis results)
-└── 📷 validation_categories.jpg          (Valid/Invalid categorization)
-
+📦 pan-validation-sql-python
+├── 📄 README.md                                    (This file)
+├── 📄 PAN_card_validation.sql                      (Complete SQL implementation)
+├── 📄 pan_validation.py                            (Complete Python implementation)
+├── 📄 PAN Number Validation Dataset.xlsx           (Original dataset)
+├── 📄 PAN Number Validation Dataset.csv            (CSV format for SQL import)
+├── 📄 PAN VALIDATION RESULT.xlsx                   (Python output with validation results)
+├── 📄 PAN Number Validation - Problem Statement.pdf (Project requirements)
+├── 📷 summary_report.jpg                           (Summary analysis results)
+└── 📷 validation_categories.jpg                    (Valid/Invalid categorization)
 
 ```
 
 ## 🚀 How to Run This Project
 
-### Prerequisites
-- PostgreSQL installed
-- pgAdmin or any PostgreSQL client
-- Basic SQL knowledge
+### Option 1: SQL Implementation
+**Prerequisites:** PostgreSQL, pgAdmin
+1. Import CSV dataset into `stg_pan_number_dataset` table
+2. Execute `PAN_card_validation.sql` script  
+3. Query `vw_valid_invalid_pans` view for results
 
-### Steps
-1. **Clone** this repository
-2. **Create** a new PostgreSQL database
-3. **Run** the table creation script
-4. **Import** your PAN dataset into `stg_pan_number_dataset`
-5. **Execute** the validation script step by step
-6. **View** results using the created view and summary queries
+### Option 2: Python Implementation  
+**Prerequisites:** Python 3.7+, pandas, openpyxl
+```
+
+pip install pandas openpyxl
+python pan_validation.py
+
+```
+**Output:** `PAN VALIDATION RESULT.xlsx` with validation results and summary
+
+## 🔍 Validation Logic Comparison
+
+| Feature | SQL Implementation | Python Implementation |
+|---------|-------------------|----------------------|
+| **Adjacent Check** | Custom PL/pgSQL function | Python loop with string indexing |
+| **Sequence Check** | ASCII comparison in function | ord() function comparison |
+| **Pattern Match** | PostgreSQL regex `~` | Python `re.match()` |
+| **Performance** | Database-optimized | Memory-efficient pandas |
+| **Output Format** | Database view | Excel with multiple sheets |
 
 ## 💡 What I Learned
 
-- Advanced PostgreSQL function development
-- Complex data validation logic implementation
-- Real-world data cleaning challenges
-- Government data format requirements
-- Performance optimization for large datasets
+- **Database Programming**: Advanced PostgreSQL function development
+- **Python Data Science**: Pandas for real-world data processing  
+- **Comparative Analysis**: SQL vs Python for same business problem
+- **Data Quality**: Comprehensive validation rule implementation
+- **Documentation**: Creating clear technical specifications
 
 ## 🎓 Business Value
 
 This project demonstrates ability to:
-- ✅ Handle sensitive financial data validation
-- ✅ Implement complex business rules in SQL
-- ✅ Create reusable validation functions
-- ✅ Build comprehensive data quality reports
-- ✅ Work with government compliance requirements
+- ✅ **Multi-Technology Expertise**: Solve same problem using different tools
+- ✅ **Data Quality Assurance**: Implement complex validation rules  
+- ✅ **Financial Compliance**: Handle sensitive government ID validation
+- ✅ **Scalable Solutions**: Process thousands of records efficiently
+- ✅ **Report Generation**: Create business-ready summary reports
+- ✅ **Code Documentation**: Write maintainable, reusable functions
 
-*This project highlights my ability to check data accuracy and run powerful SQL analysis.*
+## 🔄 Why Both SQL and Python?
+
+**SQL Advantages:**
+- Database integration and optimization
+- Set-based operations for large datasets
+- Enterprise data warehouse compatibility
+
+**Python Advantages:**  
+- Flexible data manipulation and analysis
+- Rich ecosystem of data science libraries
+- Easy report generation and file export
+
+*This project demonstrates my ability to use both SQL and Python for data validation, supporting data engineering and analytics tasks.*
 
 ## ✉️ Contact
 
