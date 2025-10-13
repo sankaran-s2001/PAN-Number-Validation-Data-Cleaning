@@ -1,4 +1,4 @@
-# 🔐 PAN Number Validation & Data Cleaning 
+# 🔐 PAN Number Validation & Data Cleaning Project
 ### SQL + Python Dual Implementation
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
